@@ -112,6 +112,15 @@ router = app => {
 			response.status(201).send("Order added with ID : " + result.insertId + "\n");
 		});
 	});
+
+	app.delete("/orders/:id", (request, response) => {
+		pool.query("DELETE FROM orders WHERE id = ?", request.params.id, (error, result) => {
+			if(error){
+				return console.log(error);
+			}
+			response.send("Order deleted!\n");
+		});
+	});
 }
 
 module.exports = router;
