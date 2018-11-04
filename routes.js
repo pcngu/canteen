@@ -1,8 +1,41 @@
 pool = require("./config");
+fs = require("fs");
 
 router = app => {
 	app.get("/", (request, response) => {
 		response.send("Welcome to Canteen!");
+	});
+
+	app.get("/login", (request, response) => {
+		fs.readFile("html/login.html", (error, page) => {
+			if(error){
+				response.writeHead(404);
+				response.write("Sorry, the page you requested doesn't exist!");
+			}
+			else{
+				response.writeHead(200, {
+					"Content-Type" : "text/html"
+				});
+				response.write(page);
+			}
+			response.end();
+		});
+	});
+
+	app.get("/register", (request, response) => {
+		fs.readFile("html/register.html", (error, page) => {
+			if(error){
+				response.writeHead(404);
+				response.write("Sorry, the page you requested doesn't exist!");
+			}
+			else{
+				response.writeHead(200, {
+					"Content-Type" : "text/html"
+				});
+				response.write(page);
+			}
+			response.end();
+		});
 	});
 
 	app.get("/users", (request, response) => {
