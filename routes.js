@@ -3,39 +3,92 @@ fs = require("fs");
 
 router = app => {
 	app.get("/", (request, response) => {
-		response.send("Welcome to Canteen!");
+		if(request.session.phone){
+			fs.readFile("html/index.html", (error, page) => {
+				if(error){
+					response.writeHead(404);
+					response.write("Sorry, the page you requested doesn't exist!");
+				}
+				else{
+					response.writeHead(200, {
+						"Content-Type" : "text/html"
+					});
+					response.write(page);
+				}
+				response.end();
+			});
+		}
+		else{
+			response.redirect("/login");
+		}
 	});
 
 	app.get("/login", (request, response) => {
-		fs.readFile("html/login.html", (error, page) => {
-			if(error){
-				response.writeHead(404);
-				response.write("Sorry, the page you requested doesn't exist!");
+		if(request.session.phone){
+			response.redirect("/");
+		}
+		else{
+			fs.readFile("html/login.html", (error, page) => {
+				if(error){
+					response.writeHead(404);
+					response.write("Sorry, the page you requested doesn't exist!");
+				}
+				else{
+					response.writeHead(200, {
+						"Content-Type" : "text/html"
+					});
+					response.write(page);
+				}
+				response.end();
+			});
+		}
+	});
+
+	app.get("/logout", (request, response) => {
+		if(request.session.phone){
+			request.session.destroy((error) => {
+				if(error){
+					return console.log(error);
+				}
+				response.redirect("/");
+			});
+		}
+		else{
+			response.redirect("/login");
+		}
+	});
+
+	app.post("/login", (request, response) => {
+		pool.query("SELECT password FROM users WHERE phone = ?", request.body.phone, (error, result) => {
+			if(result[0]["password"] == request.body.password){
+				request.session.phone = request.body.phone;
+				response.redirect("/");
 			}
 			else{
-				response.writeHead(200, {
-					"Content-Type" : "text/html"
-				});
-				response.write(page);
+				response.redirect("/login");
 			}
-			response.end();
 		});
 	});
 
 	app.get("/register", (request, response) => {
-		fs.readFile("html/register.html", (error, page) => {
-			if(error){
-				response.writeHead(404);
-				response.write("Sorry, the page you requested doesn't exist!");
-			}
-			else{
-				response.writeHead(200, {
-					"Content-Type" : "text/html"
-				});
-				response.write(page);
-			}
-			response.end();
-		});
+		if(request.session.phone){
+			response.redirect("/");
+		}
+		else{
+			fs.readFile("html/register.html", (error, page) => {
+				if(error){
+					response.writeHead(404);
+					response.write("Sorry, the page you requested doesn't exist!");
+				}
+				else{
+					response.writeHead(200, {
+						"Content-Type" : "text/html"
+					});
+					response.write(page);
+				}
+				response.end();
+			});
+		}
 	});
 
 	app.get("/users", (request, response) => {
