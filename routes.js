@@ -1,21 +1,25 @@
 pool = require("./config");
-fs = require("fs");
 
 router = app => {
 	app.get("/", (request, response) => {
 		if(request.session.phone){
-			fs.readFile("html/index.html", (error, page) => {
-				if(error){
-					response.writeHead(404);
-					response.write("Sorry, the page you requested doesn't exist!");
+			pool.query("SELECT name FROM users WHERE phone = ?", request.session.phone, (error, result) => {
+				if(result && result.length == 1){
+					response.render("index", {
+						name : result[0]["name"]
+					});
 				}
 				else{
-					response.writeHead(200, {
-						"Content-Type" : "text/html"
+					request.session.destroy((error) => {
+						if(error){
+							return console.log(error);
+						}
+						response.render("login", {
+							showError : 1,
+							loginError : "Please login again!"
+						});
 					});
-					response.write(page);
 				}
-				response.end();
 			});
 		}
 		else{
@@ -28,18 +32,9 @@ router = app => {
 			response.redirect("/");
 		}
 		else{
-			fs.readFile("html/login.html", (error, page) => {
-				if(error){
-					response.writeHead(404);
-					response.write("Sorry, the page you requested doesn't exist!");
-				}
-				else{
-					response.writeHead(200, {
-						"Content-Type" : "text/html"
-					});
-					response.write(page);
-				}
-				response.end();
+			response.render("login", {
+				showError : 0,
+				loginError : ""
 			});
 		}
 	});
@@ -60,12 +55,15 @@ router = app => {
 
 	app.post("/login", (request, response) => {
 		pool.query("SELECT password FROM users WHERE phone = ?", request.body.phone, (error, result) => {
-			if(result[0]["password"] == request.body.password){
+			if(result && result.length == 1 && result[0]["password"] == request.body.password){
 				request.session.phone = request.body.phone;
 				response.redirect("/");
 			}
 			else{
-				response.redirect("/login");
+				response.render("login", {
+					showError : 1,
+					loginError : "Phone number or Password is incorrect!"
+				});
 			}
 		});
 	});
@@ -75,18 +73,9 @@ router = app => {
 			response.redirect("/");
 		}
 		else{
-			fs.readFile("html/register.html", (error, page) => {
-				if(error){
-					response.writeHead(404);
-					response.write("Sorry, the page you requested doesn't exist!");
-				}
-				else{
-					response.writeHead(200, {
-						"Content-Type" : "text/html"
-					});
-					response.write(page);
-				}
-				response.end();
+			response.render("register", {
+				showError : 0,
+				registerError : ""
 			});
 		}
 	});
@@ -110,11 +99,21 @@ router = app => {
 	});
 
 	app.post("/users", (request, response) => {
-		pool.query("INSERT INTO users SET ?", request.body, (error, result) => {
-			if(error){
-				return console.log(error);
+		pool.query("SELECT id FROM users WHERE phone = ?", request.body.phone, (error, result) => {
+			if(result && result.length == 0){
+				pool.query("INSERT INTO users SET ?", request.body, (error, result) => {
+					if(error){
+						return console.log(error);
+					}
+					response.status(201).send("User added with ID : " + result.insertId + "\n");
+				});
 			}
-			response.status(201).send("User added with ID : " + result.insertId + "\n");
+			else{
+				response.render("register", {
+					showError : 1,
+					registerError : "Phone number already exists!"
+				});
+			}
 		});
 	});
 
