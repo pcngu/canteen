@@ -6,10 +6,10 @@
 <body>
 	<form action="http://localhost:8080/login" method="post">
 		<label for="phone">Phone No.</label>
-		<input type="tel" name="phone" required>
+		<p><input type="tel" name="phone" required></p>
 
 		<label for="password">Password</label>
-		<input type="password" name="password" required>
+		<p><input type="password" name="password" required></p>
 
 		<% if(showError){ %>
 			<p><%= loginError %></p>
@@ -17,6 +17,6 @@
 
 		<p><button type="submit">Login</button></p>
 	</form>
-	<a href="http://localhost:8080/register">Register</a>
+	<p><a href="http://localhost:8080/register">Register</a></p>
 </body>
 </html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add Item</title>
+</head>
+<body>
+	<form action="http://localhost:8080/items" method="post">
+		<label for="name">Item Name</label>
+		<p><input type="text" name="name" required></p>
+
+		<label for="type">Type</label>
+		<p><input type="text" name="type" required></p>
+
+		<label for="price">Price</label>
+		<p><input type="number" name="price" required></p>
+
+		<label for="image">Image Url</label>
+		<p><input type="text" name="image" required></p>
+
+		<p><button type="submit">Add</button></p>
+	</form>
+	<p><a href="http://localhost:8080/">Home</a></p>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Menu</title>
+	<script type="text/javascript">
+		function addToCart(i){
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("POST", "http://localhost:8080/orders", true);
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhttp.send("itemId=" + i + "&quantity=" + document.getElementById(i).value);
+			document.getElementById(i).value = 0;
+		}
+	</script>
+</head>
+<body>
+	<% for(var i = 0; i < items.length; i++){ %>
+		<img width="200px" src=<%= items[i]["image"] %> />
+		<p><%= items[i]["name"] %></p>
+		<p><input id=<%= items[i]["id"] %> type="number" name="quantity" required></p>
+		<p><button type="button" onclick="addToCart(<%= items[i]["id"] %>)">Add to Cart</button></p>
+	<% } %>
+	<p><a href="http://localhost:8080/">Home</a></p>
+</body>
+</html>

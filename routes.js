@@ -6,7 +6,8 @@ router = app => {
 			pool.query("SELECT name FROM users WHERE phone = ?", request.session.phone, (error, result) => {
 				if(result && result.length == 1){
 					response.render("index", {
-						name : result[0]["name"]
+						name : result[0]["name"],
+						isAdmin : request.session.phone == 0123456789
 					});
 				}
 				else{
@@ -77,6 +78,31 @@ router = app => {
 				showError : 0,
 				registerError : ""
 			});
+		}
+	});
+
+	app.get("/addItem", (request, response) => {
+		if(request.session.phone){
+			response.render("addItem");
+		}
+		else{
+			response.redirect("/login");
+		}
+	});
+
+	app.get("/menu", (request, response) => {
+		if(request.session.phone){
+			pool.query("SELECT * FROM items", (error, result) => {
+				if(error){
+					return console.log(error);
+				}
+				response.render("menu", {
+					items : result,
+				});
+			});
+		}
+		else{
+			response.redirect("/login");
 		}
 	});
 
@@ -190,11 +216,37 @@ router = app => {
 	});
 
 	app.post("/orders", (request, response) => {
-		pool.query("INSERT INTO orders SET ?, time = ?", [request.body, new Date()], (error, result) => {
+		if(request.body.quantity > 0){
+			pool.query("SELECT id FROM users WHERE phone = ?", request.session.phone, (error, resultU) => {
+				if(resultU && resultU.length == 1){
+					pool.query("INSERT INTO orders SET ?, userId = ?, time = ?", [request.body, resultU[0]["id"], new Date()], (error, resultO) => {
+						if(error){
+							return console.log(error);
+						}
+						response.status(201).send("Order added with ID : " + resultO.insertId + "\n");
+					});
+				}
+				else{
+					request.session.destroy((error) => {
+						if(error){
+							return console.log(error);
+						}
+						response.render("login", {
+							showError : 1,
+							loginError : "Please login again!"
+						});
+					});
+				}
+			});
+		}
+	});
+
+	app.put("/orders/:id", (request, response) => {
+		pool.query("UPDATE orders SET ? WHERE id = ?", [request.body, request.params.id], (error, result) => {
 			if(error){
 				return console.log(error);
 			}
-			response.status(201).send("Order added with ID : " + result.insertId + "\n");
+			response.send("Order updated successfully!\n");
 		});
 	});
 
