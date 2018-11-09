@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Menu</title>
+	<script type="text/javascript">
+		function deleteFromCart(i){
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("DELETE", "http://localhost:8080/cart/"+i, true);
+			xhttp.send();
+			window.location.reload(true);
+		}
+
+		function checkout(){
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("PUT", "http://localhost:8080/cart", true);
+			xhttp.send();
+			window.location.reload(true);
+		}
+	</script>
+</head>
+<body>
+	<% for(var i = 0; i < orders.length; i++){ %>
+		<img width="200px" src=<%= orders[i]["image"] %> />
+		<p><%= orders[i]["name"] %></p>
+		<p><%= orders[i]["quantity"] %></p>
+		<p><button type="button" onclick="deleteFromCart(<%= orders[i]["id"] %>)">Delete From Cart</button></p>
+	<% } %>
+	<p><button type="button" onclick="checkout()">Checkout</button></p>
+	<p><a href="http://localhost:8080/">Home</a></p>
+</body>
+</html>

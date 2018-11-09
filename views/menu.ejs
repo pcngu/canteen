@@ -5,7 +5,7 @@
 	<script type="text/javascript">
 		function addToCart(i){
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("POST", "http://localhost:8080/orders", true);
+			xhttp.open("POST", "http://localhost:8080/menu", true);
 			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			xhttp.send("itemId=" + i + "&quantity=" + document.getElementById(i).value);
 			document.getElementById(i).value = 0;
