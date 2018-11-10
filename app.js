@@ -1,8 +1,8 @@
 port = 8080
+
 express = require("express");
 session = require("express-session");
 bodyParser = require("body-parser");
-routes = require("./routes");
 
 app = express();
 
@@ -17,7 +17,16 @@ app.use(bodyParser.urlencoded({
 }));
 app.set("view engine", "ejs");
 
-routes(app);
+require("./routes/index")(app);
+require("./routes/login")(app);
+require("./routes/logout")(app);
+require("./routes/register")(app);
+require("./routes/addItem")(app);
+require("./routes/menu")(app);
+require("./routes/cart")(app);
+require("./routes/users")(app);
+require("./routes/items")(app);
+require("./routes/orders")(app);
 
 server = app.listen(port, (error) => {
 	if(error){
