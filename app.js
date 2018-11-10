@@ -27,6 +27,7 @@ require("./routes/cart")(app);
 require("./routes/users")(app);
 require("./routes/items")(app);
 require("./routes/orders")(app);
+require("./routes/activeOrders")(app);
 
 server = app.listen(port, (error) => {
 	if(error){

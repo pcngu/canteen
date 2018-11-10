@@ -7,23 +7,29 @@
 			var xhttp = new XMLHttpRequest();
 			xhttp.open("DELETE", "http://localhost:8080/cart/"+i, true);
 			xhttp.send();
-			window.location.reload(true);
+			var elements = document.getElementsByClassName(i);
+			while(elements.length){
+				elements[0].parentNode.removeChild(elements[0]);
+			}
 		}
 
 		function checkout(){
 			var xhttp = new XMLHttpRequest();
 			xhttp.open("PUT", "http://localhost:8080/cart", true);
 			xhttp.send();
-			window.location.reload(true);
+			var elements = document.getElementsByName("order");
+			while(elements.length){
+				elements[0].parentNode.removeChild(elements[0]);
+			}
 		}
 	</script>
 </head>
 <body>
 	<% for(var i = 0; i < orders.length; i++){ %>
-		<img width="200px" src=<%= orders[i]["image"] %> />
-		<p><%= orders[i]["name"] %></p>
-		<p><%= orders[i]["quantity"] %></p>
-		<p><button type="button" onclick="deleteFromCart(<%= orders[i]["id"] %>)">Delete From Cart</button></p>
+		<img class=<%= orders[i]["id"] %> name="order" width="200px" src=<%= orders[i]["image"] %> />
+		<p class=<%= orders[i]["id"] %> name="order"><%= orders[i]["name"] %></p>
+		<p class=<%= orders[i]["id"] %> name="order"><%= orders[i]["quantity"] %></p>
+		<p class=<%= orders[i]["id"] %> name="order"><button type="button" onclick="deleteFromCart(<%= orders[i]["id"] %>)">Delete From Cart</button></p>
 	<% } %>
 	<p><button type="button" onclick="checkout()">Checkout</button></p>
 	<p><a href="http://localhost:8080/">Home</a></p>

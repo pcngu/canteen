@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Menu</title>
+	<script type="text/javascript">
+		function finishOrder(i){
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("DELETE", "http://localhost:8080/activeOrders/"+i, true);
+			xhttp.send();
+			var elements = document.getElementsByClassName(i);
+			while(elements.length){
+				elements[0].parentNode.removeChild(elements[0]);
+			}
+		}
+	</script>
+</head>
+<body>
+	<% for(var i = 0; i < orders.length; i++){ %>
+		<img class=<%= orders[i]["id"] %> width="200px" src=<%= orders[i]["image"] %> />
+		<p class=<%= orders[i]["id"] %>><%= orders[i]["name"] %></p>
+		<p class=<%= orders[i]["id"] %>><%= orders[i]["quantity"] %></p>
+		<p class=<%= orders[i]["id"] %>><%= orders[i]["uname"] %></p>
+		<p class=<%= orders[i]["id"] %>><button type="button" onclick="finishOrder(<%= orders[i]["id"] %>)">Finish Order</button></p>
+	<% } %>
+	<p><a href="http://localhost:8080/">Home</a></p>
+</body>
+</html>
